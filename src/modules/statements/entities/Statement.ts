@@ -1,50 +1,55 @@
+import { unwatchFile } from 'node:fs';
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { User } from '../../users/entities/User';
 
 export enum OperationType {
-  DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw',
+    DEPOSIT = 'deposit',
+    WITHDRAW = 'withdraw',
+    TRANSFER = 'transfer'
 }
 
 @Entity('statements')
 export class Statement {
-  @PrimaryGeneratedColumn('uuid')
-  id?: string;
+    @PrimaryGeneratedColumn('uuid')
+    id?: string;
 
-  @Column('uuid')
-  user_id: string;
+    @Column('uuid')
+    user_id: string;
 
-  @ManyToOne(() => User, user => user.statement)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+    @Column('uuid')
+    sender_id?: string;
 
-  @Column()
-  description: string;
+    @ManyToOne(() => User, user => user.statement)
+    @JoinColumn({ name: 'user_id' })
+    user: User;
 
-  @Column('decimal', { precision: 5, scale: 2 })
-  amount: number;
+    @Column()
+    description: string;
 
-  @Column({ type: 'enum', enum: OperationType })
-  type: OperationType;
+    @Column('decimal', { precision: 6, scale: 2 })
+    amount: number;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @Column({ type: 'enum', enum: OperationType })
+    type: OperationType;
 
-  @CreateDateColumn()
-  updated_at: Date;
+    @CreateDateColumn()
+    created_at: Date;
 
-  constructor() {
-    if (!this.id) {
-      this.id = uuid();
+    @CreateDateColumn()
+    updated_at: Date;
+
+    constructor() {
+        if (!this.id) {
+            this.id = uuid();
+        }
     }
-  }
 }
